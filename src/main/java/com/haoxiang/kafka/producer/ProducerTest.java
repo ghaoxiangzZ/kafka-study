@@ -171,7 +171,7 @@ public class ProducerTest {
     }
 
     public static void main(String[] args) {
-        testSendWithInterceptor();
+        testProducerAsyncSend();
     }
 
 }

@@ -1,18 +1,13 @@
 package com.haoxiang.kafka.consumer;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author haoxiang_guo
@@ -25,10 +20,10 @@ public class ConsumerTest {
 
     private static Logger logger = LoggerFactory.getLogger(ConsumerTest.class);
 
-    private static volatile boolean isActive;
+    private static volatile boolean isActive = Boolean.TRUE;
 
     public static void main(String[] args) {
-        consumerSample();
+        consumerSaveOffsetToDB();
     }
 
     /*
@@ -88,6 +83,7 @@ public class ConsumerTest {
         properties.put("bootstrap.servers", "192.168.188.129:9092,192.168.188.129:9093,192.168.188.129:9094");
         properties.put("group.id", groupId);
         properties.put("enable.auto.commit", "false");
+        properties.put("auto.offset.reset", "earliest");
         properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
@@ -116,4 +112,96 @@ public class ConsumerTest {
     private static void insertIntoDB(List<ConsumerRecords<String, String>> buffer) {
         //模拟持久化入库
     }
+
+    /*
+     * @title consumerSaveOffsetToDB
+     * @description 外部存储consumer offset
+     * @author haoxiang_guo
+     * @param []
+     * @updateTime 2021-01-22 19:08:21
+     * @return void
+     * @throws
+     */
+    private static void consumerSaveOffsetToDB() {
+        String topic = "test-topic";
+        String groupId = "test-group";
+        Properties properties = new Properties();
+        properties.put("bootstrap.servers", "192.168.188.129:9092,192.168.188.129:9093,192.168.188.129:9094");
+        properties.put("group.id", groupId);
+        properties.put("enable.auto.commit", "false");
+        properties.put("auto.offset.reset", "earliest");
+        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
+        final AtomicLong totalRebalanceTime = new AtomicLong(0L);
+        final AtomicLong joinStart = new AtomicLong(0L);
+        consumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+            @Override
+            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                for (TopicPartition partition : partitions) {
+                    saveOffsetToDB(consumer.position(partition));
+                    joinStart.set(System.currentTimeMillis());
+                }
+            }
+
+            @Override
+            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                // 更新总rebalance时长
+                totalRebalanceTime.addAndGet(System.currentTimeMillis() - joinStart.get());
+                for (TopicPartition partition : partitions) {
+                    // 读取offset
+                    consumer.seek(partition, readOffsetFromDB(partition));
+                }
+            }
+        });
+        try {
+            while (isActive) {
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                for (ConsumerRecord<String, String> record : records) {
+                    logger.info("topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
+                }
+            }
+        } finally {
+            logger.info("total rebalance time={}", totalRebalanceTime.get());
+            consumer.close();
+        }
+    }
+
+    /*
+     * @title readOffsetFromDB
+     * @description 模拟从DB读取offset
+     * @author haoxiang_guo
+     * @param []
+     * @updateTime 2021-01-25 23:19:57
+     * @return void
+     * @throws
+     */
+    private static long readOffsetFromDB(TopicPartition partition) {
+        logger.info("read offset，partition={}", partition);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new Random().nextInt(200000);
+    }
+
+    /*
+     * @title saveOffsetToDB
+     * @description 模拟offset保存到DB
+     * @author haoxiang_guo
+     * @param []
+     * @updateTime 2021-01-25 23:19:57
+     * @return void
+     * @throws
+     */
+    private static void saveOffsetToDB(long offset) {
+        logger.info("save offset={}", offset);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
