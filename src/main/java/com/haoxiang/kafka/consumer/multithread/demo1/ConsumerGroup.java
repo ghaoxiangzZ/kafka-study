@@ -1,4 +1,4 @@
-package com.haoxiang.kafka.consumer.multithreaded;
+package com.haoxiang.kafka.consumer.multithread.demo1;
 
 import java.util.ArrayList;
 import java.util.List;

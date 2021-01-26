@@ -1,4 +1,4 @@
-package com.haoxiang.kafka.consumer.multithreaded;
+package com.haoxiang.kafka.consumer.multithread.demo1;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
