@@ -7,7 +7,6 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
@@ -58,7 +57,7 @@ public class ConsumerThreadHandler<K, V> {
                 new ArrayBlockingQueue<>(1000), new ThreadPoolExecutor.CallerRunsPolicy());
         try {
             while (true) {
-                ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<K, V> records = consumer.poll(1000);
                 if (!records.isEmpty()) {
                     executors.submit(new ConsumerWorker<>(records, offsets));
                     commitOffsets();

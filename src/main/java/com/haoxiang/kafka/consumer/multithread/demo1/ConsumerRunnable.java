@@ -6,7 +6,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.Properties;
 
@@ -41,7 +40,7 @@ public class ConsumerRunnable implements Runnable {
     @Override
     public void run() {
         while (true) {
-            ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(200));
+            ConsumerRecords<String, String> records = consumer.poll(200);
             for (ConsumerRecord<String, String> record : records) {
                 logger.info("thread={} consumed partition={}, offset={}", Thread.currentThread().getName(), record.partition(), record.offset());
             }

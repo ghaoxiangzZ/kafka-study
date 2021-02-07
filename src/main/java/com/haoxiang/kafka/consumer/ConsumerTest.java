@@ -5,7 +5,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -57,7 +56,7 @@ public class ConsumerTest {
         consumer.subscribe(Arrays.asList(topic));
         try {
             while (isActive) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<String, String> records = consumer.poll(1000);
                 for (ConsumerRecord<String, String> record : records) {
                     logger.info("offset = {}, key = {}, value = {}", record.offset(), record.key(), record.value());
                 }
@@ -91,7 +90,7 @@ public class ConsumerTest {
         final int minBatchSize = 500;
         try {
             while (isActive) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<String, String> records = consumer.poll(1000);
                 // 遍历订阅的分区
                 for (TopicPartition partition : records.partitions()) {
                     List<ConsumerRecord<String, String>> partitionRecordList = records.records(partition);
@@ -156,7 +155,7 @@ public class ConsumerTest {
         });
         try {
             while (isActive) {
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+                ConsumerRecords<String, String> records = consumer.poll(1000);
                 for (ConsumerRecord<String, String> record : records) {
                     logger.info("topic={}, partition={}, offset={}", record.topic(), record.partition(), record.offset());
                 }
