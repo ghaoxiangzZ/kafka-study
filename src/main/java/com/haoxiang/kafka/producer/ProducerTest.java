@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +37,8 @@ public class ProducerTest {
         String topic = "test-topic";
         Properties props = new Properties();
         props.put("bootstrap.servers", "192.168.188.129:9092,192.168.188.129:9093,192.168.188.129:9094");
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("key.serializer", StringSerializer.class.getName());
+        props.put("value.serializer", StringSerializer.class.getName());
         props.put("acks", "-1");
         props.put("retries", "3");
         props.put("batch.size", 323840);
@@ -71,8 +72,8 @@ public class ProducerTest {
         String topic = "test-customizable-partition-topic";
         Properties props = new Properties();
         props.put("bootstrap.servers", "192.168.188.129:9092,192.168.188.129:9093,192.168.188.129:9094");
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("key.serializer", StringSerializer.class.getName());
+        props.put("value.serializer", StringSerializer.class.getName());
         props.put("acks", "-1");
         props.put("retries", "3");
         props.put("batch.size", 323840);
@@ -108,8 +109,8 @@ public class ProducerTest {
         String topic = "test-customizable-serializer-topic";
         Properties props = new Properties();
         props.put("bootstrap.servers", "192.168.188.129:9092,192.168.188.129:9093,192.168.188.129:9094");
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "com.haoxiang.kafka.serializer.UserSerializer");
+        props.put("key.serializer", StringSerializer.class.getName());
+        props.put("value.serializer", StringSerializer.class.getName());
         props.put("acks", "-1");
         props.put("retries", "3");
         props.put("batch.size", 323840);
@@ -143,8 +144,8 @@ public class ProducerTest {
         String topic = "test-interceptor-topic";
         Properties props = new Properties();
         props.put("bootstrap.servers", "192.168.188.129:9092,192.168.188.129:9093,192.168.188.129:9094");
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("key.serializer", StringSerializer.class.getName());
+        props.put("value.serializer", StringSerializer.class.getName());
         props.put("acks", "-1");
         props.put("retries", "3");
         props.put("batch.size", 323840);

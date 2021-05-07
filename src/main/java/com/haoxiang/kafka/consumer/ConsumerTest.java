@@ -2,6 +2,7 @@ package com.haoxiang.kafka.consumer;
 
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,9 +48,9 @@ public class ConsumerTest {
         // 从最早的消息开始读取
         properties.put("auto.offset.reset", "earliest");
         // 必须指定
-        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("key.deserializer", StringDeserializer.class.getName());
         // 必须指定
-        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("value.deserializer", StringDeserializer.class.getName());
         // 创建consumer实例
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
         // 订阅topic
@@ -83,8 +84,8 @@ public class ConsumerTest {
         properties.put("group.id", groupId);
         properties.put("enable.auto.commit", "false");
         properties.put("auto.offset.reset", "earliest");
-        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("key.deserializer", StringDeserializer.class.getName());
+        properties.put("value.deserializer", StringDeserializer.class.getName());
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
         consumer.subscribe(Arrays.asList(topic));
         final int minBatchSize = 500;
@@ -129,8 +130,8 @@ public class ConsumerTest {
         properties.put("group.id", groupId);
         properties.put("enable.auto.commit", "false");
         properties.put("auto.offset.reset", "earliest");
-        properties.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        properties.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        properties.put("key.deserializer", StringDeserializer.class.getName());
+        properties.put("value.deserializer", StringDeserializer.class.getName());
         KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties);
         final AtomicLong totalRebalanceTime = new AtomicLong(0L);
         final AtomicLong joinStart = new AtomicLong(0L);
